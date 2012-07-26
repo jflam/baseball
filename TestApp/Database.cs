@@ -111,12 +111,11 @@ public class PlayerPitchingStats
         }
     }
 
-
-    public int CareerSaves
+    public double CareerWinLossPercentage
     {
         get
         {
-            return PitchingStats.Sum(item => item.Saves);
+            return (double)CareerWins / ((double)CareerWins + (double)CareerLosses);
         }
     }
 
@@ -128,6 +127,212 @@ public class PlayerPitchingStats
         }
     }
 
+    public double CareerEarnedRunAverage
+    {
+        get
+        {
+            double earnedRuns = (double)CareerEarnedRuns;
+            return earnedRuns * 9 / CareerInningsPitched;
+        }
+    }
+
+    public int CareerGames
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Games);
+        }
+    }
+
+    public int CareerGamesStarted
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.GamesStarted);
+        }
+    }
+
+    /// <summary>
+    /// This is a stat that tells you how many games a pitcher appeared as a reliever and completed the game in
+    /// </summary>
+    public int CareerGamesFinished
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.GamesFinished);
+        }
+    }
+
+    public int CareerCompleteGames
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.CompleteGames);
+        }
+    }
+
+    public int CareerShutouts
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Shutouts);
+        }
+    }
+
+    public int CareerSaves
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Saves);
+        }
+    }
+
+    /// <summary>
+    /// This returns the innings pitched as a double that is suitable for use in computations
+    /// </summary>
+    public double CareerInningsPitched
+    {
+        get
+        {
+            int ipouts = PitchingStats.Sum(item => item.InningsPitchedOuts);
+            return (double)ipouts / 3.0;
+        }
+    }
+
+    public int CareerHits
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Hits);
+        }
+    }
+
+    public int CareerRuns
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Runs);
+        }
+    }
+
+    public int CareerEarnedRuns
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.EarnedRuns);
+        }
+    }
+
+    public int CareerHomeRuns
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.HomeRuns);
+        }
+    }
+
+    public int CareerWalks
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Walks);
+        }
+    }
+
+    public int CareerIntentionalWalks
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.IntentionalWalks);
+        }
+    }
+
+    public int CareerStrikeouts
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Strikeouts);
+        }
+    }
+
+    public int CareerHitByPitch
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.HitByPitch);
+        }
+    }
+
+    public int CareerBalks
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.Balks);
+        }
+    }
+
+    public int CareerWildPitches
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.WildPitches);
+        }
+    }
+
+    public int CareerBattersFaced
+    {
+        get
+        {
+            return PitchingStats.Sum(item => item.BattersFaced);
+        }
+    }
+    public double CareerWalksPlusHitsDividedByInningsPitched
+    {
+        get
+        {
+            return ((double)CareerWalks + (double)CareerHits) / CareerInningsPitched;
+        }
+    }
+
+    public double CareerHitsPerNineInnings
+    {
+        get
+        {
+            return (double)CareerHits * 9.0 / CareerInningsPitched;
+        }
+    }
+
+    public double CareerHomeRunsPerNineInnings
+    {
+        get
+        {
+            return (double)CareerHomeRuns * 9.0 / CareerInningsPitched;
+        }
+    }
+
+    public double CareerWalksPerNineInnings
+    {
+        get
+        {
+            return (double)CareerWalks * 9.0 / CareerInningsPitched;
+        }
+    }
+
+    public double CareerStrikeoutsPerNineInnings
+    {
+        get
+        {
+            return (double)CareerStrikeouts * 9.0 / CareerInningsPitched;
+        }
+    }
+
+    public double CareerStrikeoutWalkRatio
+    {
+        get
+        {
+            return (double)CareerStrikeouts / (double)CareerWalks;
+        }
+    }
 }
 
 /// <summary>
@@ -303,6 +508,9 @@ public class PitchingStats
     [Column("IBB")]
     public int IntentionalWalks { get; set; }
 
+    [Column("HBP")]
+    public int HitByPitch { get; set; }
+
     [Column("WP")]
     public int WildPitches { get; set; }
 
@@ -317,6 +525,71 @@ public class PitchingStats
 
     [Column("ERA")]
     public double EarnedRunAverage { get; set; }
+
+    // Computed values
+    public double WinLossPercentage
+    {
+        get
+        {
+            return (double)Wins / ((double)Wins + (double)Losses);
+        }
+    }
+
+    public double InningsPitched
+    {
+        get
+        {
+            return (double)InningsPitchedOuts / 3.0;
+        }
+    }
+
+    public double WalksPlusHitsDividedByInningsPitched
+    {
+        get
+        {
+            return ((double)Walks + (double)Hits) / InningsPitched;
+        }
+    }
+
+    public double HitsPerNineInnings
+    {
+        get
+        {
+            return (double)Hits * 9.0 / InningsPitched;
+        }
+    }
+
+    public double HomeRunsPerNineInnings
+    {
+        get
+        {
+            return (double)HomeRuns * 9.0 / InningsPitched;
+        }
+    }
+
+    public double WalksPerNineInnings
+    {
+        get
+        {
+            return (double)Walks * 9.0 / InningsPitched;
+        }
+    }
+
+    public double StrikeoutsPerNineInnings
+    {
+        get
+        {
+            return (double)Strikeouts * 9.0 / InningsPitched;
+        }
+    }
+
+    public double StrikeoutWalkRatio
+    {
+        get
+        {
+            return (double)Strikeouts / (double)Walks;
+        }
+    }
 }
 
 // AsyncLazy<T> class from Stephen Toub's blog post on combining Lazy<T> with async
