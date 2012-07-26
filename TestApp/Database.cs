@@ -98,12 +98,7 @@ public class PlayerPitchingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _pitchingStats)
-            {
-                result += item.Wins;
-            }
-            return result;
+            return _pitchingStats.Sum(item => item.Wins);
         }
     }
 
@@ -111,12 +106,7 @@ public class PlayerPitchingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _pitchingStats)
-            {
-                result += item.Losses;
-            }
-            return result;
+            return _pitchingStats.Sum(item => item.Losses);
         }
     }
 
@@ -125,12 +115,7 @@ public class PlayerPitchingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _pitchingStats)
-            {
-                result += item.Saves;
-            }
-            return result;
+            return _pitchingStats.Sum(item => item.Saves);
         }
     }
 
@@ -138,12 +123,7 @@ public class PlayerPitchingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _pitchingStats)
-            {
-                result += item.InningsPitchedOuts;
-            }
-            return result;
+            return _pitchingStats.Sum(item => item.InningsPitchedOuts);
         }
     }
 
@@ -163,12 +143,7 @@ public class PlayerBattingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _battingStats)
-            {
-                result += item.HomeRuns;
-            }
-            return result;
+            return _battingStats.Sum(item => item.HomeRuns);
         }
     }
 
@@ -176,12 +151,7 @@ public class PlayerBattingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _battingStats)
-            {
-                result += item.AtBats;
-            }
-            return result;
+            return _battingStats.Sum(item => item.AtBats);
         }
     }
 
@@ -189,12 +159,7 @@ public class PlayerBattingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _battingStats)
-            {
-                result += item.Hits;
-            }
-            return result;
+            return _battingStats.Sum(item => item.Hits);
         }
     }
 
@@ -202,12 +167,7 @@ public class PlayerBattingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _battingStats)
-            {
-                result += item.Doubles;
-            }
-            return result;
+            return _battingStats.Sum(item => item.Doubles);
         }
     }
 
@@ -215,12 +175,7 @@ public class PlayerBattingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _battingStats)
-            {
-                result += item.Triples;
-            }
-            return result;
+            return _battingStats.Sum(item => item.Triples);
         }
     }
 
@@ -228,12 +183,7 @@ public class PlayerBattingStats
     {
         get
         {
-            int result = 0;
-            foreach (var item in _battingStats)
-            {
-                result += item.Walks;
-            }
-            return result;
+            return _battingStats.Sum(item => item.Walks);
         }
     }
 
