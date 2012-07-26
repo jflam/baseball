@@ -87,18 +87,18 @@ public class Master
 
 public class PlayerPitchingStats
 {
-    private List<PitchingStats> _pitchingStats;
+    public List<PitchingStats> PitchingStats { get; set; }
 
     public PlayerPitchingStats(List<PitchingStats> pitchingStats)
     {
-        _pitchingStats = pitchingStats;
+        PitchingStats = pitchingStats;
     }
 
     public int CareerWins
     {
         get
         {
-            return _pitchingStats.Sum(item => item.Wins);
+            return PitchingStats.Sum(item => item.Wins);
         }
     }
 
@@ -106,7 +106,7 @@ public class PlayerPitchingStats
     {
         get
         {
-            return _pitchingStats.Sum(item => item.Losses);
+            return PitchingStats.Sum(item => item.Losses);
         }
     }
 
@@ -115,7 +115,7 @@ public class PlayerPitchingStats
     {
         get
         {
-            return _pitchingStats.Sum(item => item.Saves);
+            return PitchingStats.Sum(item => item.Saves);
         }
     }
 
@@ -123,27 +123,30 @@ public class PlayerPitchingStats
     {
         get
         {
-            return _pitchingStats.Sum(item => item.InningsPitchedOuts);
+            return PitchingStats.Sum(item => item.InningsPitchedOuts);
         }
     }
 
 }
 
+/// <summary>
+/// Class that encapsulates both individual batting stat entries as well
+/// as cumulative totals of those stats (eg career home runs)
+/// </summary>
 public class PlayerBattingStats
 {
-    private List<BattingStats> _battingStats;
+    private List<BattingStats> BattingStats { get; set; }
 
     public PlayerBattingStats(List<BattingStats> battingStats)
     {
-        _battingStats = battingStats;
+        BattingStats = battingStats;
     }
 
-    // Compute some interesting numbers here
     public int CareerHomeRuns
     {
         get
         {
-            return _battingStats.Sum(item => item.HomeRuns);
+            return BattingStats.Sum(item => item.HomeRuns);
         }
     }
 
@@ -151,7 +154,7 @@ public class PlayerBattingStats
     {
         get
         {
-            return _battingStats.Sum(item => item.AtBats);
+            return BattingStats.Sum(item => item.AtBats);
         }
     }
 
@@ -159,7 +162,7 @@ public class PlayerBattingStats
     {
         get
         {
-            return _battingStats.Sum(item => item.Hits);
+            return BattingStats.Sum(item => item.Hits);
         }
     }
 
@@ -167,7 +170,7 @@ public class PlayerBattingStats
     {
         get
         {
-            return _battingStats.Sum(item => item.Doubles);
+            return BattingStats.Sum(item => item.Doubles);
         }
     }
 
@@ -175,7 +178,7 @@ public class PlayerBattingStats
     {
         get
         {
-            return _battingStats.Sum(item => item.Triples);
+            return BattingStats.Sum(item => item.Triples);
         }
     }
 
@@ -183,7 +186,7 @@ public class PlayerBattingStats
     {
         get
         {
-            return _battingStats.Sum(item => item.Walks);
+            return BattingStats.Sum(item => item.Walks);
         }
     }
 
