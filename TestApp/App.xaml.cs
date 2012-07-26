@@ -39,15 +39,14 @@ namespace TestApp
         private async void InitializeDatabase()
         {
             // Do some query that is interesting
-            //var command = connection.CreateCommand("select m.playerID, b.yearID, b.AB from master m inner join batting b on m.playerID = b.playerID where birthState=? ", "WY");
-            //var results = command.ExecuteQuery<BattingStats>();
-            var wyPlayers = (await BaseballDatabase.GetDatabaseAsync()).GetPlayersBornInState("WY");
-            var mikeLansingBattingStats = (await BaseballDatabase.GetDatabaseAsync()).GetPlayerById("lansimi01");
+            var database = await Baseball.GetConnection();
+            var wyPlayers = database.GetPlayersBornInState("WY");
+            var mikeLansingBattingStats = database.GetPlayerById("lansimi01");
             var stats = await mikeLansingBattingStats.GetBattingStatsAsync();
-            var kenGriffeys = (await BaseballDatabase.GetDatabaseAsync()).GetPlayersByName("Ken", "Griffey");
+            var kenGriffeys = database.GetPlayersByName("Ken", "Griffey");
             var stats1 = await kenGriffeys[0].GetBattingStatsAsync();
             var stats2 = await kenGriffeys[1].GetBattingStatsAsync();
-            var randyJohnson = (await BaseballDatabase.GetDatabaseAsync()).GetPlayersByName("Randy", "Johnson");
+            var randyJohnson = database.GetPlayersByName("Randy", "Johnson");
             var stats3 = await randyJohnson[2].GetPitchingStatsAsync();
             var x = 42;
         }

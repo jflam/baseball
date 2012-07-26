@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -52,7 +53,7 @@ public class Players
     {
         if (_battingStats == null)
         {
-            _battingStats = (await BaseballDatabase.GetDatabaseAsync()).GetBattingStats(PlayerID);
+            _battingStats = (await Baseball.GetConnection()).GetBattingStats(PlayerID);
         }
         return _battingStats;
     }
@@ -61,7 +62,7 @@ public class Players
     {
         if (_pitchingStats == null)
         {
-            _pitchingStats = (await BaseballDatabase.GetDatabaseAsync()).GetPitchingStats(PlayerID);
+            _pitchingStats = (await Baseball.GetConnection()).GetPitchingStats(PlayerID);
         }
         return _pitchingStats;
     }
@@ -272,7 +273,7 @@ public class PitchingStats
     [Column("GF")]
     public int GamesFinished { get; set; }
 
-    [Column("IPOuts")]
+    [Column("IPouts")]
     public int InningsPitchedOuts { get; set; }
 
     [Column("H")]
@@ -318,16 +319,21 @@ public class PitchingStats
     public double EarnedRunAverage { get; set; }
 }
 
-public class BaseballDatabase
-{
-    private static BaseballDatabase _current = null;
+// AsyncLazy<T> class from Stephen Toub's blog post on combining Lazy<T> with async
+// http://blogs.msdn.com/b/pfxteam/archive/2011/01/15/10116210.aspx
 
+public class AsyncLazy<T> : Lazy<Task<T>>
+{
+    public AsyncLazy(Func<T> valueFactory) : base(() => Task.Factory.StartNew(valueFactory)) { }
+    public AsyncLazy(Func<Task<T>> taskFactory) : base(() => Task.Factory.StartNew(() => taskFactory()).Unwrap()) { }
+    public TaskAwaiter<T> GetAwaiter() { return Value.GetAwaiter(); }
+}
+
+public class Baseball
+{
     const string BASEBALL_DATABASE = "baseball-archive-2011.sqlite";
 
-    // Note: I can't implement the try pattern because async methods cannot have out or ref params
-    // however, I need a name that suggests that there is a distinguished return value from the function
-    // if something expected (database not there) happens. 
-    private async Task<StorageFile> GetDatabase()
+    private static async Task<StorageFile> GetApplicationFolderDatabasePath()
     {
         try
         {
@@ -340,37 +346,42 @@ public class BaseballDatabase
         }
     }
 
-    private async Task<string> GetDatabasePathAsync()
+    private static async Task<string> CopyDatabaseToApplicationFolder()
     {
-        StorageFile database = await GetDatabase();
+        var pathToPackageDatabase = Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, BASEBALL_DATABASE);
+        var packageDatabase = await StorageFile.GetFileFromPathAsync(pathToPackageDatabase);
+        var database = await packageDatabase.CopyAsync(Windows.Storage.ApplicationData.Current.LocalFolder);
+        return database.Path;
+    }
+
+    private static async Task<string> GetDatabasePathAsync()
+    {
+        StorageFile database = await GetApplicationFolderDatabasePath();
         if (database == null)
         {
-            // copy the database to the application folder and return a reference to it
-            var pathToPackageDatabase = Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, BASEBALL_DATABASE);
-            var packageDatabase = await StorageFile.GetFileFromPathAsync(pathToPackageDatabase);
-            database = await packageDatabase.CopyAsync(Windows.Storage.ApplicationData.Current.LocalFolder);
+            return await CopyDatabaseToApplicationFolder();
         }
         return database.Path;
     }
 
-    private SQLiteConnection _connection;
-
-    public BaseballDatabase() { }
-
-    // TODO: rewrite this ... there are races here
-    public static async Task<BaseballDatabase> GetDatabaseAsync()
+    static AsyncLazy<Baseball> _database = new AsyncLazy<Baseball>(async () =>
     {
-        if (_current == null)
-        {
-            var database = new BaseballDatabase();
-            var path = await database.GetDatabasePathAsync();
-            database._connection = new SQLiteConnection(path);
-            _current = database;
-        }
-        return _current;
+        var pathToDatabase = await GetDatabasePathAsync();
+        return new Baseball(new SQLiteConnection(pathToDatabase));
+    });
+
+    public static async Task<Baseball> GetConnection()
+    {
+        return await _database;
     }
 
-    // TODO: should these be async methods?
+    private SQLiteConnection _connection;
+
+    public Baseball(SQLiteConnection connection)
+    {
+        _connection = connection;
+    }
+
     public PlayerBattingStats GetBattingStats(string playerId)
     {
         var battingStats = _connection.Query<BattingStats>("select * from batting where playerId=?", playerId);
