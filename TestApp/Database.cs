@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 
 // Entity definitions
@@ -53,7 +55,8 @@ public class Players
     {
         if (_battingStats == null)
         {
-            _battingStats = (await Baseball.GetConnection()).GetBattingStats(PlayerID);
+            var connection = await Baseball.GetConnection();
+            _battingStats = await connection.GetBattingStatsAsync(PlayerID);
         }
         return _battingStats;
     }
@@ -62,7 +65,8 @@ public class Players
     {
         if (_pitchingStats == null)
         {
-            _pitchingStats = (await Baseball.GetConnection()).GetPitchingStats(PlayerID);
+            var connection = await Baseball.GetConnection();
+            _pitchingStats = await connection.GetPitchingStatsAsync(PlayerID);
         }
         return _pitchingStats;
     }
@@ -655,29 +659,49 @@ public class Baseball
         _connection = connection;
     }
 
-    public PlayerBattingStats GetBattingStats(string playerId)
+    private PlayerBattingStats GetBattingStats(string playerId)
     {
         var battingStats = _connection.Query<BattingStats>("select * from batting where playerId=?", playerId);
         return new PlayerBattingStats(battingStats);
     }
 
-    public PlayerPitchingStats GetPitchingStats(string playerId)
+    public IAsyncOperation<PlayerBattingStats> GetBattingStatsAsync(string playerId)
+    {
+        return Task.Run(() => GetBattingStats(playerId)).AsAsyncOperation();
+    }
+
+    private PlayerPitchingStats GetPitchingStats(string playerId)
     {
         var pitchingStats = _connection.Query<PitchingStats>("select * from pitching where playerId=?", playerId);
         return new PlayerPitchingStats(pitchingStats);
     }
 
-    public List<Players> GetPlayersBornInState(string stateId)
+    public IAsyncOperation<PlayerPitchingStats> GetPitchingStatsAsync(string playerId)
+    {
+        return Task.Run(() => GetPitchingStats(playerId)).AsAsyncOperation();
+    }
+
+    private List<Players> GetPlayersBornInState(string stateId)
     {
         return _connection.Query<Players>("select * from master where birthState=?", stateId);
     }
 
-    public List<Players> GetPlayersByName(string firstName, string lastName)
+    public IAsyncOperation<List<Players>> GetPlayersBornInStateAsync(string stateId)
+    {
+        return Task.Run(() => GetPlayersBornInState(stateId)).AsAsyncOperation();
+    }
+
+    private List<Players> GetPlayersByName(string firstName, string lastName)
     {
         return _connection.Query<Players>("select * from master where nameFirst=? and nameLast=?", firstName, lastName);
     }
 
-    public Players GetPlayerById(string playerId)
+    public IAsyncOperation<List<Players>> GetPlayersByNameAsync(string firstName, string lastName)
+    {
+        return Task.Run(() => GetPlayersByName(firstName, lastName)).AsAsyncOperation();
+    }
+
+    private Players GetPlayerById(string playerId)
     {
         var players = _connection.Query<Players>("select * from master where playerId=?", playerId);
         if (players.Count != 1)
@@ -688,5 +712,10 @@ public class Baseball
         {
             return players[0];
         }
+    }
+
+    public IAsyncOperation<Players> GetPlayerByIdAsync(string playerId)
+    {
+        return Task.Run(() => GetPlayerById(playerId)).AsAsyncOperation();
     }
 }

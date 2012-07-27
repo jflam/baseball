@@ -40,13 +40,13 @@ namespace TestApp
         {
             // Do some query that is interesting
             var database = await Baseball.GetConnection();
-            var wyPlayers = database.GetPlayersBornInState("WY");
-            var mikeLansingBattingStats = database.GetPlayerById("lansimi01");
+            var wyPlayers = await database.GetPlayersBornInStateAsync("WY");
+            var mikeLansingBattingStats = await database.GetPlayerByIdAsync("lansimi01");
             var stats = await mikeLansingBattingStats.GetBattingStatsAsync();
-            var kenGriffeys = database.GetPlayersByName("Ken", "Griffey");
+            var kenGriffeys = await database.GetPlayersByNameAsync("Ken", "Griffey");
             var stats1 = await kenGriffeys[0].GetBattingStatsAsync();
             var stats2 = await kenGriffeys[1].GetBattingStatsAsync();
-            var randyJohnson = database.GetPlayersByName("Randy", "Johnson");
+            var randyJohnson = await database.GetPlayersByNameAsync("Randy", "Johnson");
             var stats3 = await randyJohnson[2].GetPitchingStatsAsync();
             var x = 42;
         }
