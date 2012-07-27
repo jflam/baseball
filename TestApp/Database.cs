@@ -352,19 +352,19 @@ public class PlayerBattingStats
         BattingStats = battingStats;
     }
 
-    public int CareerHomeRuns
-    {
-        get
-        {
-            return BattingStats.Sum(item => item.HomeRuns);
-        }
-    }
-
     public int CareerAtBats
     {
         get
         {
             return BattingStats.Sum(item => item.AtBats);
+        }
+    }
+
+    public int CareerRuns
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.Runs);
         }
     }
 
@@ -392,6 +392,38 @@ public class PlayerBattingStats
         }
     }
 
+    public int CareerHomeRuns
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.HomeRuns);
+        }
+    }
+
+    public int CareerRunsBattedIn
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.RunsBattedIn);
+        }
+    }
+
+    public int CareerStolenBases
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.StolenBases);
+        }
+    }
+
+    public int CareerCaughtStealing
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.CaughtStealing);
+        }
+    }
+
     public double CareerWalks
     {
         get
@@ -400,11 +432,91 @@ public class PlayerBattingStats
         }
     }
 
+    public int CareerStrikeouts
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.StrikeOuts);
+        }
+    }
+
     public double CareerBattingAverage
     {
         get
         {
             return (double)CareerHits / (double)CareerAtBats;
+        }
+    }
+
+    public double CareerOnBasePercentage
+    {
+        get
+        {
+            return ((double)CareerHits + (double)CareerWalks + (double)CareerHitByPitch) / ((double)CareerAtBats + (double)CareerWalks + (double)CareerHitByPitch + (double)CareerSacrificeFlies);
+        }
+    }
+
+    public double CareerSluggingPercentage
+    {
+        get
+        {
+            return (double)CareerTotalBases / (double)CareerAtBats;
+        }
+    }
+
+    public double CareerOnBasePlusSlugging
+    {
+        get
+        {
+            return CareerOnBasePercentage + CareerSluggingPercentage;
+        }
+    }
+
+    public int CareerTotalBases
+    {
+        get
+        {
+            return CareerHits + 2 * CareerDoubles + 3 * CareerTriples + 4 * CareerHomeRuns;
+        }
+    }
+
+    public int CareerGroundedIntoDoublePlays
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.GroundedIntoDoublePlays);
+        }
+    }
+
+    public int CareerHitByPitch
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.HitByPitch);
+        }
+    }
+
+    public int CareerSacrificeHits
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.SacrificeHits);
+        }
+    }
+
+    public int CareerSacrificeFlies
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.SacrificeFlies);
+        }
+    }
+
+    public int CareerIntentionalWalks
+    {
+        get
+        {
+            return BattingStats.Sum(item => item.IntentionalWalks);
         }
     }
 }
@@ -417,8 +529,14 @@ public class BattingStats
     [Column("yearID")]
     public int Year { get; set; }
 
+    [Column("G")]
+    public int Games { get; set; }
+
     [Column("AB")]
     public int AtBats { get; set; }
+
+    [Column("R")]
+    public int Runs { get; set; }
 
     [Column("H")]
     public int Hits { get; set; }
@@ -432,17 +550,74 @@ public class BattingStats
     [Column("HR")]
     public int HomeRuns { get; set; }
 
+    [Column("RBI")]
+    public int RunsBattedIn { get; set; }
+
+    [Column("SB")]
+    public int StolenBases { get; set; }
+
+    [Column("CS")]
+    public int CaughtStealing { get; set; }
+
     [Column("BB")]
     public int Walks { get; set; }
 
     [Column("SO")]
     public int StrikeOuts { get; set; }
 
+    [Column("IBB")]
+    public int IntentionalWalks { get; set; }
+
+    [Column("HBP")]
+    public int HitByPitch { get; set; }
+
+    [Column("SH")]
+    public int SacrificeHits { get; set; }
+
+    [Column("SF")]
+    public int SacrificeFlies { get; set; }
+
+    [Column("GIDP")]
+    public int GroundedIntoDoublePlays { get; set; }
+
+    // Computed values
     public double BattingAverage
     {
         get
         {
             return (double)Hits / (double)AtBats;
+        }
+    }
+
+    public double OnBasePercentage
+    {
+        get
+        {
+            return ((double)Hits + (double)Walks + (double)HitByPitch) / ((double)AtBats + (double)Walks + (double)HitByPitch + (double)SacrificeFlies);
+        }
+    }
+
+    public double SluggingPercentage
+    {
+        get
+        {
+            return (double)TotalBases / (double)AtBats;
+        }
+    }
+
+    public double OnBasePlusSlugging
+    {
+        get
+        {
+            return OnBasePercentage + SluggingPercentage;
+        }
+    }
+
+    public int TotalBases
+    {
+        get
+        {
+            return Hits + 2 * Doubles + 3 * Triples + 4 * HomeRuns;
         }
     }
 }
