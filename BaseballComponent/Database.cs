@@ -766,7 +766,7 @@ namespace BaseballComponent
     {
         const string BASEBALL_DATABASE = "baseball-archive-2011.sqlite";
 
-        private static async Task<StorageFile> GetApplicationFolderDatabasePath()
+        private static async Task<StorageFile> GetApplicationFolderDatabasePathAsync()
         {
             try
             {
@@ -779,7 +779,7 @@ namespace BaseballComponent
             }
         }
 
-        private static async Task<string> CopyDatabaseToApplicationFolder()
+        private static async Task<string> CopyDatabaseToApplicationFolderAsync()
         {
             var pathToPackageDatabase = Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, BASEBALL_DATABASE);
             var packageDatabase = await StorageFile.GetFileFromPathAsync(pathToPackageDatabase);
@@ -789,24 +789,29 @@ namespace BaseballComponent
 
         private static async Task<string> GetDatabasePathAsync()
         {
-            StorageFile database = await GetApplicationFolderDatabasePath();
+            StorageFile database = await GetApplicationFolderDatabasePathAsync();
             if (database == null)
             {
-                return await CopyDatabaseToApplicationFolder();
+                return await CopyDatabaseToApplicationFolderAsync();
             }
             return database.Path;
         }
 
-        //static AsyncLazy<Baseball> _database = new AsyncLazy<Baseball>(async () =>
-        //{
-        //    var pathToDatabase = await GetDatabasePathAsync();
-        //    return new Baseball(new SQLiteConnection(pathToDatabase));
-        //});
+        static AsyncLazy<Baseball> _database = new AsyncLazy<Baseball>(async () =>
+        {
+            var pathToDatabase = await GetDatabasePathAsync();
+            return new Baseball(new SQLiteConnection(pathToDatabase));
+        });
 
-        //public static async Task<Baseball> GetConnection()
-        //{
-        //    return await _database;
-        //}
+        static async Task<Baseball> GetConnectionInternalAsync()
+        {
+            return await _database;
+        }
+
+        public static IAsyncOperation<Baseball> GetConnectionAsync()
+        {
+            return GetConnectionInternalAsync().AsAsyncOperation();
+        }
 
         private SQLiteConnection _connection;
 
