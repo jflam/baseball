@@ -41,7 +41,7 @@ using Sqlite3DatabaseHandle = System.IntPtr;
 using Sqlite3Statement = System.IntPtr;
 #endif
 
-namespace BaseballComponent.SQLite
+namespace SQLite
 {
 	class SQLiteException : System.Exception
 	{

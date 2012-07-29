@@ -1,4 +1,4 @@
-﻿using BaseballComponent.SQLite;
+﻿using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using Windows.Storage;
 
 // Entity definitions
 
-namespace BaseballComponent
+namespace BaseballComponent 
 {
     public sealed class Players
     {

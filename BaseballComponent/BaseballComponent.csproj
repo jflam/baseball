@@ -103,9 +103,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\BaseballLibrary\BaseballLibrary.csproj">
+    <ProjectReference Include="..\BaseballLibrary\SQLite.csproj">
       <Project>{e1025e5c-9221-4e9e-9366-0bd0e18951ba}</Project>
-      <Name>BaseballLibrary</Name>
+      <Name>SQLite</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

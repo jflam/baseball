@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseballComponent", "BaseballComponent.csproj", "{91CE584E-70D2-4F13-BD52-87034F3EFFE6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseballLibrary", "..\BaseballLibrary\BaseballLibrary.csproj", "{E1025E5C-9221-4E9E-9366-0BD0E18951BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLite", "..\BaseballLibrary\SQLite.csproj", "{E1025E5C-9221-4E9E-9366-0BD0E18951BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
